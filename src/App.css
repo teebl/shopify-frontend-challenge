@@ -1,0 +1,14 @@
+.subscribeCard {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  margin: 10px;
+  padding: 40px;
+  background-color: #000639;
+  color: white; }
+  .subscribeCard hr {
+    display: inline-block;
+    align-self: left;
+    border-color: #7ab55c; }
+
+.title {
+  font-size: 24px; }

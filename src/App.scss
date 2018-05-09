@@ -1,32 +1,20 @@
-.App {
-  text-align: center;
+html {
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 160px;
-}
-
-.App-header {
-  background-color: green;
-  height: 150px;
-  padding: 20px;
+.subscribeCard {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  margin: 10px;
+  padding: 40px;
+  background-color: #000639;
   color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+  hr {
+    display: inline-block;
+    align-self: left;
+    border-color: #7ab55c;
   }
-  to {
-    transform: rotate(360deg);
-  }
+}
+
+.title {
+  font-size: 24px;
 }
