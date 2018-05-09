@@ -1,14 +1,27 @@
+input,
+select {
+  height: 40px;
+  padding: 0px;
+  border: 0px solid white;
+  margin: 5px;
+  border-radius: 5px;
+  font-size: 16px;
+  border-right: 1px solid black; }
+
+.placeholder {
+  color: pink; }
+
 .subscribeCard {
+  max-width: 500px;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 16px;
   margin: 10px;
   padding: 40px;
   background-color: #000639;
   color: white; }
+  .subscribeCard > .title {
+    font-size: 24px; }
   .subscribeCard hr {
     display: inline-block;
     align-self: left;
     border-color: #7ab55c; }
-
-.title {
-  font-size: 24px; }
