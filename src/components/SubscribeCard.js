@@ -55,11 +55,7 @@ export default class SubscribeCard extends Component {
 	render() {
 		if (!this.state.formComplete) {
 			return (
-				<div className="subscribeCard">
-					<h1 className="title">
-						Stay up to date with ecommerce trends with Shopify's newsletter
-					</h1>
-					<hr width="20px" />
+				<SubscribeBox>
 					<p>Subscribe for free marketing tips</p>
 					<form onSubmit={this.handleSubmit}>
 						<input
@@ -71,6 +67,7 @@ export default class SubscribeCard extends Component {
 						<select
 							placeholder="Interested In..."
 							onChange={this.selectDropdown}
+							onSubmit={this.handleSubmit}
 						>
 							<option value="" defaultValue>
 								Interested in...
@@ -83,18 +80,14 @@ export default class SubscribeCard extends Component {
 						<ErrorMessage error={this.state.error} />
 					</form>
 					<SignUpButton onClick={this.handleSubmit} />
-				</div>
+				</SubscribeBox>
 			);
 		} else {
 			return (
-				<div className="subscribeCard">
-					<h1 className="title">
-						Stay up to date with ecommerce trends with Shopify's newsletter
-					</h1>
-					<hr width="20px" />
+				<SubscribeBox>
 					<h3>Thanks for subscribing</h3>
 					<p>You'll start receiving free tips and resources soon</p>
-				</div>
+				</SubscribeBox>
 			);
 		}
 	}
@@ -121,6 +114,18 @@ const SignUpButton = props => {
 	return (
 		<div className="signUpButton" onClick={props.onClick}>
 			Sign Up Now
+		</div>
+	);
+};
+
+const SubscribeBox = props => {
+	return (
+		<div className="subscribeCard">
+			<h1 className="title">
+				Stay up to date with ecommerce trends with Shopify's newsletter
+			</h1>
+			<hr width="20px" />
+			{props.children}
 		</div>
 	);
 };
