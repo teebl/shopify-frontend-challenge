@@ -7,6 +7,12 @@ class App extends Component {
 		return (
 			<div className="App">
 				<SubscribeCard />
+				<p>
+					the code can be found{" "}
+					<a href="https://www.github.com/teebl/shopify-frontend-challenge">
+						here
+					</a>
+				</p>
 			</div>
 		);
 	}

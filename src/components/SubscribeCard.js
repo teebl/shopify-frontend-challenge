@@ -12,10 +12,9 @@ export default class SubscribeCard extends Component {
 			],
 			textInput: "",
 			submittedEmail: "",
-			error: "dropDown",
+			error: "",
 			newsletterCategory: "",
 			formComplete: false,
-			emailCheck: "",
 			loading: false
 		};
 		this.submitEmail = this.submitEmail.bind(this);
@@ -62,15 +61,14 @@ export default class SubscribeCard extends Component {
 		//simulate an API request, as well as log the submitted data in the console
 		setTimeout(() => {
 			console.log("The submitted email address: " + email);
-			console.log("The area of interest:" + category);
+			console.log("The area of interest: " + category);
 			this.setState({ formComplete: true, loading: false });
 		}, 2000);
 	}
 
 	selectDropdown(category) {
-		//changes the dropdown option in state
+		//defines the selected item in the dropdown menu
 		this.setState({ newsletterCategory: category });
-		console.log(category);
 	}
 
 	render() {
@@ -89,25 +87,11 @@ export default class SubscribeCard extends Component {
 								/>
 								<ErrorMessage error={this.state.error} />
 							</div>
-
-							<select
-								className="dropdownMenu"
-								placeholder="Interested In..."
-								onChange={this.selectDropdown}
-								onSubmit={this.handleSubmit}
-							>
-								<option value="" defaultValue>
-									Interested in...
-								</option>
-								<option value="marketing">Marketing</option>
-								<option value="siteDesign">Site Design</option>
-								<option value="newFeatures">New Features</option>
-								<option value="clientStories">Client Stories</option>
-							</select>
 							<DropdownMenu
 								onChange={this.selectDropdown}
 								selectedCategory={this.state.newsletterCategory}
 								onClick={this.selectDropdown}
+								onSubmit={this.handleSubmit}
 								categories={this.state.categories}
 							/>
 							<SignUpButton
@@ -130,6 +114,8 @@ export default class SubscribeCard extends Component {
 }
 
 const ErrorMessage = props => {
+	//stateless functional component, only shows up when passed an error message from state
+	//the switch is a bit much, but it would have the capacity to scale
 	switch (props.error) {
 		case "dropdown":
 			return (
@@ -147,7 +133,8 @@ const ErrorMessage = props => {
 };
 
 const SignUpButton = props => {
-	const message = props.loading ? "Submitting" : "Sign up now";
+	//Another stateless functional component, it will pose as a loading indicator while the fake async operation occurs
+	const message = props.loading ? "Submitting..." : "Sign up now";
 	return (
 		<div className="signUpButton" onClick={props.onClick}>
 			{message}
@@ -171,6 +158,7 @@ const SubscribeWrapper = props => {
 export class DropdownMenu extends Component {
 	/*rather than cleaning up and re-establishing <select>, I decided to just make my own custom dropdown
 	 component in order to match the details depicted in the challenge*/
+	//caret SVG courtesy of Font Awesome
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -182,17 +170,15 @@ export class DropdownMenu extends Component {
 	}
 
 	dropdownHandler() {
-		console.log("click!");
 		this.setState({ dropdownVisible: !this.state.dropdownVisible });
 	}
 
 	categoryHandler(e) {
-		console.log("clicky");
 		this.setState({ dropdownVisible: !this.state.dropdownVisible });
 		this.props.onClick(e.target.innerText);
 		console.dir(e.target.innerText);
 	}
-	//caret SVG courtesy of Font Awesome
+
 	render() {
 		//toggles dropdown menu visibility
 		const dropdownToggle = this.state.dropdownVisible
