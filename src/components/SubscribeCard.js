@@ -1,16 +1,22 @@
 import React, { Component } from "react";
-import FormField from "./FormField";
 
 export default class SubscribeCard extends Component {
 	constructor() {
 		super();
 		this.state = {
-			formField: "",
+			categories: [
+				"Marketing",
+				"Site Design",
+				"New Features",
+				"Client Stories"
+			],
+			textInput: "",
 			submittedEmail: "",
 			error: "dropDown",
 			newsletterCategory: "",
 			formComplete: false,
-			emailCheck: ""
+			emailCheck: "",
+			loading: false
 		};
 		this.submitEmail = this.submitEmail.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -19,75 +25,105 @@ export default class SubscribeCard extends Component {
 	}
 
 	handleChange(e) {
-		this.setState({ formField: e.target.value });
-		console.log(this.state.formField);
+		//updates state with current text in field
+		this.setState({ textInput: e.target.value });
 	}
 
 	handleSubmit(e) {
+		//prevent typical form behaviour
 		e.preventDefault();
 		//this lengthy regex is RFC 5322 compliant, and procured from https://www.emailregex.com
 		const emailRegex = new RegExp(
 			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 		);
-
-		if (
-			emailRegex.test(this.state.formField) &&
+		//prevent submission if already 'loading'
+		if (this.state.loading) {
+			return;
+		} else if (
+			emailRegex.test(this.state.textInput) &&
 			this.state.newsletterCategory !== ""
 		) {
+			//email validated, carry out email submission, and clear any error message
 			this.setState({ error: "" });
-			this.submitEmail();
-		} else if (!emailRegex.test(this.state.formField)) {
+			this.submitEmail(this.state.textInput, this.state.newsletterCategory);
+		} else if (!emailRegex.test(this.state.textInput)) {
+			// validation failed, email error will be rendered
 			this.setState({ error: "email" });
 		} else if (this.state.newsletterCategory === "") {
+			// validation passed, but no category selected. dropdown error will be rendered
 			this.setState({ error: "dropdown" });
 		}
 	}
 
-	submitEmail() {
-		this.setState({ formComplete: true });
+	submitEmail(email, category) {
+		//prevent sending additional requests with 'loading' bool
+		this.setState({ loading: true });
+
+		//simulate an API request, as well as log the submitted data in the console
+		setTimeout(() => {
+			console.log("The submitted email address: " + email);
+			console.log("The area of interest:" + category);
+			this.setState({ formComplete: true, loading: false });
+		}, 2000);
 	}
 
-	selectDropdown(e) {
-		this.setState({ newsletterCategory: e.target.value });
-		console.log(this.state.newsletterCategory);
+	selectDropdown(category) {
+		//changes the dropdown option in state
+		this.setState({ newsletterCategory: category });
+		console.log(category);
 	}
 
 	render() {
 		if (!this.state.formComplete) {
 			return (
-				<SubscribeBox>
-					<p>Subscribe for free marketing tips</p>
-					<form onSubmit={this.handleSubmit}>
-						<input
-							type="text"
-							placeholder="Email Address"
-							value={this.state.formField}
-							onChange={this.handleChange}
-						/>
-						<select
-							placeholder="Interested In..."
-							onChange={this.selectDropdown}
-							onSubmit={this.handleSubmit}
-						>
-							<option value="" defaultValue>
-								Interested in...
-							</option>
-							<option value="marketing">Marketing</option>
-							<option value="siteDesign">Site Design</option>
-							<option value="newFeatures">New Features</option>
-							<option value="clientStories">Client Stories</option>
-						</select>
-						<ErrorMessage error={this.state.error} />
-					</form>
-					<SignUpButton onClick={this.handleSubmit} />
-				</SubscribeBox>
+				<SubscribeWrapper>
+					<div className="entryForm">
+						<p>Subscribe for free marketing tips</p>
+						<form className="formInput" onSubmit={this.handleSubmit}>
+							<div className="emailInput">
+								<input
+									type="text"
+									placeholder="Email Address"
+									value={this.state.textInput}
+									onChange={this.handleChange}
+								/>
+								<ErrorMessage error={this.state.error} />
+							</div>
+
+							<select
+								className="dropdownMenu"
+								placeholder="Interested In..."
+								onChange={this.selectDropdown}
+								onSubmit={this.handleSubmit}
+							>
+								<option value="" defaultValue>
+									Interested in...
+								</option>
+								<option value="marketing">Marketing</option>
+								<option value="siteDesign">Site Design</option>
+								<option value="newFeatures">New Features</option>
+								<option value="clientStories">Client Stories</option>
+							</select>
+							<DropdownMenu
+								onChange={this.selectDropdown}
+								selectedCategory={this.state.newsletterCategory}
+								onClick={this.selectDropdown}
+								categories={this.state.categories}
+							/>
+							<SignUpButton
+								onClick={this.handleSubmit}
+								loading={this.state.loading}
+							/>
+						</form>
+					</div>
+				</SubscribeWrapper>
 			);
 		} else {
 			return (
-				<SubscribeBox>
+				<SubscribeWrapper>
 					<h3>Thanks for subscribing</h3>
 					<p>You'll start receiving free tips and resources soon</p>
-				</SubscribeBox>
+				</SubscribeWrapper>
 			);
 		}
 	}
@@ -111,14 +147,16 @@ const ErrorMessage = props => {
 };
 
 const SignUpButton = props => {
+	const message = props.loading ? "Submitting" : "Sign up now";
 	return (
 		<div className="signUpButton" onClick={props.onClick}>
-			Sign Up Now
+			{message}
 		</div>
 	);
 };
 
-const SubscribeBox = props => {
+const SubscribeWrapper = props => {
+	//made to avoid redundancy in typing out the return statements of subscribe card component
 	return (
 		<div className="subscribeCard">
 			<h1 className="title">
@@ -129,3 +167,69 @@ const SubscribeBox = props => {
 		</div>
 	);
 };
+
+export class DropdownMenu extends Component {
+	/*rather than cleaning up and re-establishing <select>, I decided to just make my own custom dropdown
+	 component in order to match the details depicted in the challenge*/
+	constructor(props) {
+		super(props);
+		this.state = {
+			dropdownVisible: false
+		};
+
+		this.dropdownHandler = this.dropdownHandler.bind(this);
+		this.categoryHandler = this.categoryHandler.bind(this);
+	}
+
+	dropdownHandler() {
+		console.log("click!");
+		this.setState({ dropdownVisible: !this.state.dropdownVisible });
+	}
+
+	categoryHandler(e) {
+		console.log("clicky");
+		this.setState({ dropdownVisible: !this.state.dropdownVisible });
+		this.props.onClick(e.target.innerText);
+		console.dir(e.target.innerText);
+	}
+	//caret SVG courtesy of Font Awesome
+	render() {
+		//toggles dropdown menu visibility
+		const dropdownToggle = this.state.dropdownVisible
+			? { display: "block" }
+			: { display: "none" };
+		//controls text color for default option
+		const defaultTextColor = this.props.selectedCategory
+			? {}
+			: { color: "#7b7b7b" };
+		return (
+			<div className="dropdownMenu">
+				<div className="dropdownSelected" style={defaultTextColor}>
+					{this.props.selectedCategory || "Interested in..."}
+				</div>
+				<div className="dropdownArrow" onClick={this.dropdownHandler}>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						height="20"
+						viewBox="0 0 320 512"
+					>
+						<path d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z" />
+					</svg>
+				</div>
+				<div className="dropdownOptions " style={dropdownToggle}>
+					{this.props.categories.map(i => {
+						return (
+							<div
+								className="dropdownOption"
+								key={i}
+								onClick={this.categoryHandler}
+							>
+								{i}
+							</div>
+						);
+					})}
+				</div>
+			</div>
+		);
+	}
+}

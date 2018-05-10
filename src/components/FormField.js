@@ -19,12 +19,13 @@ export default class FormField extends Component {
 	render() {
 		return (
 			<div className="formField">
-				{" "}
-				<input
-					value={this.state.entry}
-					onChange={this.handleChange}
-					onSubmit={this.handleSubmit}
-				/>
+				<form onSubmit={submitListener}>
+					<input
+						value={this.state.entry}
+						onChange={this.handleChange}
+						onSubmit={this.handleSubmit}
+					/>
+				</form>
 			</div>
 		);
 	}
